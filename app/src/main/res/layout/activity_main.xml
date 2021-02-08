@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="#DFF2F6">
 
     <LinearLayout
         android:id="@+id/linearlayout"
@@ -15,21 +16,25 @@
 
         <EditText
             android:id="@+id/my_search_bar"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
             android:layout_marginVertical="15dp"
             android:layout_marginHorizontal="10dp"
-            android:layout_weight="2" />
+            android:layout_weight="2"
+            android:textColor="@color/black"
+            android:background="@drawable/searchbar"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="2dp"/>
 
         <Button
             android:id="@+id/my_search_button"
-            android:layout_width="wrap_content"
+            android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginVertical="15dp"
             android:layout_marginHorizontal="10dp"
             android:layout_weight="0"
             android:layout_gravity="center_vertical"
-            android:text="Search"/>
+            android:background="@drawable/searchicon"/>
 
     </LinearLayout>
 
@@ -42,10 +47,11 @@
 
     <ProgressBar
         android:id="@+id/progressbar"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:indeterminate="true"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="true"
+        android:visibility="invisible"/>
 
 
 </RelativeLayout>

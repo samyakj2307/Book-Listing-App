@@ -2,23 +2,27 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:background="@drawable/listviewitem">
 
     <ImageView
         android:id="@+id/bookthumbnail"
         android:layout_width="64dp"
         android:layout_height="96dp"
-        android:layout_margin="20dp"/>
+        android:layout_margin="20dp"
+        android:layout_gravity="center_vertical"/>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginVertical="20dp">
+        android:layout_marginVertical="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_gravity="center_vertical">
 
         <TextView
             android:id="@+id/title_of_book"
-            android:layout_width="248dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="top"
             android:text="The Subtle Art of Not Giving a Fuck"
@@ -26,8 +30,8 @@
 
         <TextView
             android:id="@+id/author_of_book"
-            android:layout_width="152dp"
-            android:layout_height="22dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="By Mark Manson"
             android:textAppearance="@style/book_author"
             android:gravity="top" />

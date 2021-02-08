@@ -20,29 +20,53 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity{
 
     private final String API_KEY = "AIzaSyDLMs9WTD8VQBajPlznYPCf5evWHHYXxW4";
-    private String url_api_call = "https://www.googleapis.com/books/v1/volumes?q=subtle%20art&maxResults=20&key=AIzaSyDLMs9WTD8VQBajPlznYPCf5evWHHYXxW4";
+    private String mainurl = "https://www.googleapis.com/books/v1/volumes?maxResults=5&key=AIzaSyDLMs9WTD8VQBajPlznYPCf5evWHHYXxW4&q=";
+    private String url_api_call;
+
     private static final int BOOK_DATA_LOADER_ID = 1;
-    private static final int BOOK_IMAGE_LOADER_ID = 2;
 
     private BookDataAdapter mAdapter;
     private EditText mSearchBar;
     private Button mSearchButton;
     private ProgressBar mProgressBar;
+    private ListView listView;
+    private LoaderManager loaderManager;
+    private LoaderManager.LoaderCallbacks<List<BookData>> bookDataLoaderListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mProgressBar = findViewById(R.id.progressbar);
         mSearchBar = (EditText) findViewById(R.id.my_search_bar);
         mSearchButton = (Button) findViewById(R.id.my_search_button);
-        ListView listView = (ListView) findViewById(R.id.book_listview);
+        listView = (ListView) findViewById(R.id.book_listview);
         mAdapter = new BookDataAdapter(this, new ArrayList<BookData>());
         listView.setAdapter(mAdapter);
 
-        LoaderManager loaderManager = LoaderManager.getInstance(this);
+        loaderManager = LoaderManager.getInstance(this);
 
-        LoaderManager.LoaderCallbacks<List<BookData>> bookDataLoaderListener = new LoaderManager.LoaderCallbacks<List<BookData>>() {
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        mSearchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mAdapter.clear();
+                mAdapter.notifyDataSetChanged();
+                String searchtext = mSearchBar.getText().toString();
+                url_api_call = mainurl+searchtext;
+                mProgressBar.setVisibility(View.VISIBLE);
+                loaderManager.restartLoader(BOOK_DATA_LOADER_ID,null,bookDataLoaderListener);
+
+            }
+        });
+
+        bookDataLoaderListener = new LoaderManager.LoaderCallbacks<List<BookData>>() {
             @NonNull
             @Override
             public Loader<List<BookData>> onCreateLoader(int id, @Nullable Bundle args) {
@@ -56,9 +80,7 @@ public class MainActivity extends AppCompatActivity{
                 if(bookData != null && !bookData.isEmpty()){
                     mAdapter.addAll(bookData);
                 }
-
-                mProgressBar = findViewById(R.id.progressbar);
-                mProgressBar.setVisibility(View.GONE);
+                mProgressBar.setVisibility(View.INVISIBLE);
             }
 
             @Override
@@ -66,7 +88,6 @@ public class MainActivity extends AppCompatActivity{
                 mAdapter.clear();
             }
         };
-        loaderManager.initLoader(BOOK_DATA_LOADER_ID,null,bookDataLoaderListener);
 
     }
 }

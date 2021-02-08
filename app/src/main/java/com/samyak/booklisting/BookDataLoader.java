@@ -194,12 +194,13 @@ public class BookDataLoader extends AsyncTaskLoader<List<BookData>> {
                 String booktitle = volumeinfo.getString("title");
 
                 JSONArray bookauthors = volumeinfo.getJSONArray("authors");
-                String tempauthors = "";
+                StringBuilder tempauthors = new StringBuilder();
+                tempauthors.append("By ");
                 for(int j = 0 ; j<bookauthors.length(); j++){
-                    tempauthors = bookauthors.getString(j)+" ";
+                    tempauthors.append(bookauthors.getString(j)).append("\n");
                 }
 
-                String authors = tempauthors.trim();
+                String authors = tempauthors.toString().trim();
 
                 if(volumeinfo.has("imageLinks")) {
                     JSONObject image = volumeinfo.getJSONObject("imageLinks");
@@ -208,8 +209,9 @@ public class BookDataLoader extends AsyncTaskLoader<List<BookData>> {
                     Bitmap mybitmap = fetchBookImage(bookthumbnail);
                     bookDataArrayList.add(new BookData(booktitle,authors,mybitmap));
                 }
-
-                bookDataArrayList.add(new BookData(booktitle,authors,null));
+                else {
+                    bookDataArrayList.add(new BookData(booktitle, authors, null));
+                }
             }
 
         } catch (JSONException e) {
