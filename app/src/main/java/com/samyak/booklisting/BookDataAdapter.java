@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -36,6 +37,10 @@ public class BookDataAdapter extends ArrayAdapter<BookData> {
         TextView bookAuthor =listViewItem.findViewById(R.id.author_of_book);
         bookAuthor.setText(currentBookData.getmBookAuthor());
 
+        if(currentBookData.getmBookThumbnail()!=null) {
+            ImageView bookThumbnail = listViewItem.findViewById(R.id.bookthumbnail);
+            bookThumbnail.setImageBitmap(currentBookData.getmBookThumbnail());
+        }
 
         return listViewItem;
     }
