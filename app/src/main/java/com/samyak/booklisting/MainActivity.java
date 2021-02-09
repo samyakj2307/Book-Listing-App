@@ -24,7 +24,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity{
 
     private final String API_KEY = "AIzaSyDLMs9WTD8VQBajPlznYPCf5evWHHYXxW4";
-    private final String mainurl = "https://www.googleapis.com/books/v1/volumes?maxResults=10&key=AIzaSyDLMs9WTD8VQBajPlznYPCf5evWHHYXxW4&q=";
+    private final String mainurl = String.format("https://www.googleapis.com/books/v1/volumes?maxResults=10&key=%s&q=", API_KEY);
     private String url_api_call;
 
     private static final int BOOK_DATA_LOADER_ID = 1;
