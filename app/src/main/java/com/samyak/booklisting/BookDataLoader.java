@@ -171,8 +171,8 @@ public class BookDataLoader extends AsyncTaskLoader<List<BookData>> {
         return null;
     }
 
-    private Bitmap readFromStreamforimage(InputStream inputStream) throws IOException {
-        if (inputStream!=null){
+    private Bitmap readFromStreamforimage(InputStream inputStream) {
+        if (inputStream != null) {
             BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
             return BitmapFactory.decodeStream(bufferedInputStream);
         }
@@ -192,6 +192,7 @@ public class BookDataLoader extends AsyncTaskLoader<List<BookData>> {
                 JSONObject volumeinfo = singlebookinfo.getJSONObject("volumeInfo");
 
                 String booktitle = volumeinfo.getString("title");
+                String bookinfolink = volumeinfo.getString("infoLink");
 
                 JSONArray bookauthors = volumeinfo.getJSONArray("authors");
                 StringBuilder tempauthors = new StringBuilder();
@@ -207,10 +208,10 @@ public class BookDataLoader extends AsyncTaskLoader<List<BookData>> {
                     String bookthumbnail = image.getString("smallThumbnail");
                     bookthumbnail = bookthumbnail.replace("http://","https://");
                     Bitmap mybitmap = fetchBookImage(bookthumbnail);
-                    bookDataArrayList.add(new BookData(booktitle,authors,mybitmap));
+                    bookDataArrayList.add(new BookData(booktitle, authors, mybitmap, bookinfolink));
                 }
                 else {
-                    bookDataArrayList.add(new BookData(booktitle, authors, null));
+                    bookDataArrayList.add(new BookData(booktitle, authors, null, bookinfolink));
                 }
             }
 

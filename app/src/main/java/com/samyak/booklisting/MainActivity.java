@@ -1,18 +1,22 @@
 package com.samyak.booklisting;
 
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
-
-import android.graphics.Bitmap;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +24,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity{
 
     private final String API_KEY = "AIzaSyDLMs9WTD8VQBajPlznYPCf5evWHHYXxW4";
-    private String mainurl = "https://www.googleapis.com/books/v1/volumes?maxResults=5&key=AIzaSyDLMs9WTD8VQBajPlznYPCf5evWHHYXxW4&q=";
+    private final String mainurl = "https://www.googleapis.com/books/v1/volumes?maxResults=10&key=AIzaSyDLMs9WTD8VQBajPlznYPCf5evWHHYXxW4&q=";
     private String url_api_call;
 
     private static final int BOOK_DATA_LOADER_ID = 1;
@@ -28,6 +32,7 @@ public class MainActivity extends AppCompatActivity{
     private BookDataAdapter mAdapter;
     private EditText mSearchBar;
     private Button mSearchButton;
+    private TextView mEmptyStateTextView;
     private ProgressBar mProgressBar;
     private ListView listView;
     private LoaderManager loaderManager;
@@ -45,6 +50,9 @@ public class MainActivity extends AppCompatActivity{
         mAdapter = new BookDataAdapter(this, new ArrayList<BookData>());
         listView.setAdapter(mAdapter);
 
+        mEmptyStateTextView = (TextView) findViewById(R.id.empty_view);
+        listView.setEmptyView(mEmptyStateTextView);
+
         loaderManager = LoaderManager.getInstance(this);
 
     }
@@ -59,10 +67,30 @@ public class MainActivity extends AppCompatActivity{
                 mAdapter.clear();
                 mAdapter.notifyDataSetChanged();
                 String searchtext = mSearchBar.getText().toString();
-                url_api_call = mainurl+searchtext;
+                url_api_call = mainurl + searchtext;
                 mProgressBar.setVisibility(View.VISIBLE);
-                loaderManager.restartLoader(BOOK_DATA_LOADER_ID,null,bookDataLoaderListener);
+                mEmptyStateTextView.setText("");
+                loaderManager.restartLoader(BOOK_DATA_LOADER_ID, null, bookDataLoaderListener);
 
+            }
+        });
+
+        mSearchBar.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (i == KeyEvent.KEYCODE_ENTER)) {
+
+                    mAdapter.clear();
+                    mAdapter.notifyDataSetChanged();
+                    String searchtext = mSearchBar.getText().toString();
+                    url_api_call = mainurl + searchtext;
+                    mProgressBar.setVisibility(View.VISIBLE);
+                    mEmptyStateTextView.setText("");
+                    loaderManager.restartLoader(BOOK_DATA_LOADER_ID, null, bookDataLoaderListener);
+
+                    return true;
+                }
+                return false;
             }
         });
 
@@ -70,15 +98,17 @@ public class MainActivity extends AppCompatActivity{
             @NonNull
             @Override
             public Loader<List<BookData>> onCreateLoader(int id, @Nullable Bundle args) {
-                return new BookDataLoader(MainActivity.this,url_api_call);
+                return new BookDataLoader(MainActivity.this, url_api_call);
             }
 
             @Override
             public void onLoadFinished(@NonNull Loader<List<BookData>> loader, List<BookData> bookData) {
                 mAdapter.clear();
 
-                if(bookData != null && !bookData.isEmpty()){
+                if (bookData != null && !bookData.isEmpty()) {
                     mAdapter.addAll(bookData);
+                } else {
+                    mEmptyStateTextView.setText(R.string.nobooks_str);
                 }
                 mProgressBar.setVisibility(View.INVISIBLE);
             }
@@ -88,6 +118,16 @@ public class MainActivity extends AppCompatActivity{
                 mAdapter.clear();
             }
         };
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                BookData currentbookdata = mAdapter.getItem(i);
+                Uri bookinfourl = Uri.parse(currentbookdata.getmBookInfoLink());
+                Intent bookinfointent = new Intent(Intent.ACTION_VIEW, bookinfourl);
+                startActivity(bookinfointent);
+            }
+        });
 
     }
 }

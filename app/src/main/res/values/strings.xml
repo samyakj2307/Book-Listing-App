@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">BookListing</string>
+    <string name="nobooks_str">No Books Found!</string>
+    <string name="results_will_appear_here">Results will appear here</string>
+    <string name="book_thumbnail_description">Book Thumbnail</string>
+    <string name="search_bar_hint">Book Title,Author,Publication</string>
 </resources>

@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
+    android:background="@color/white"
     android:orientation="vertical"
-    android:background="#DFF2F6">
+    tools:context=".MainActivity">
 
     <LinearLayout
         android:id="@+id/linearlayout"
@@ -18,40 +17,62 @@
             android:id="@+id/my_search_bar"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:layout_marginVertical="15dp"
             android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="15dp"
             android:layout_weight="2"
-            android:textColor="@color/black"
             android:background="@drawable/searchbar"
+            android:hint="@string/search_bar_hint"
+            android:imeOptions="actionSend"
+            android:inputType="text"
             android:paddingHorizontal="10dp"
-            android:paddingVertical="2dp"/>
+            android:maxLines="1"
+            android:paddingVertical="2dp"
+            android:scrollHorizontally="true"
+            android:textColor="@color/black"
+            android:textColorHint="@android:color/darker_gray" />
 
         <Button
             android:id="@+id/my_search_button"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginVertical="15dp"
-            android:layout_marginHorizontal="10dp"
-            android:layout_weight="0"
             android:layout_gravity="center_vertical"
-            android:background="@drawable/searchicon"/>
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="15dp"
+            android:layout_weight="0"
+            android:background="@drawable/searchicon" />
 
     </LinearLayout>
 
     <ListView
         android:id="@+id/book_listview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:layout_below="@id/linearlayout"/>
+        android:layout_height="match_parent"
+        android:layout_below="@id/linearlayout"
+        android:background="@drawable/listviewbackground"
+        android:paddingVertical="10dp"
+        android:paddingTop="50dp"
+        android:paddingBottom="10dp" />
+
+    <TextView
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/linearlayout"
+        android:background="@drawable/listviewbackground"
+        android:gravity="center"
+        android:text="@string/results_will_appear_here"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
     <ProgressBar
         android:id="@+id/progressbar"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:indeterminate="true"
         android:layout_centerInParent="true"
-        android:visibility="invisible"/>
+        android:indeterminate="true"
+        android:visibility="invisible" />
 
 
 </RelativeLayout>
