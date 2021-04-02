@@ -5,36 +5,36 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity{
-
-    private final String API_KEY = "AIzaSyDLMs9WTD8VQBajPlznYPCf5evWHHYXxW4";
-    private final String mainurl = String.format("https://www.googleapis.com/books/v1/volumes?maxResults=10&key=%s&q=", API_KEY);
-    private String url_api_call;
+public class MainActivity extends AppCompatActivity implements BookDataRecyclerAdapter.BookDataRecyclerAdapterOnClickHandler {
 
     private static final int BOOK_DATA_LOADER_ID = 1;
+    private final String API_KEY = "API-KEY";
+    private final String mainUrl = String.format("https://www.googleapis.com/books/v1/volumes?maxResults=10&key=%s&q=", API_KEY);
+    private String url_api_call;
 
-    private BookDataAdapter mAdapter;
     private EditText mSearchBar;
     private Button mSearchButton;
-    private TextView mEmptyStateTextView;
     private ProgressBar mProgressBar;
-    private ListView listView;
+
+    private RecyclerView recyclerView;
+    private LinearLayoutManager layoutManager;
+    private BookDataRecyclerAdapter bookDataRecyclerAdapter;
+
     private LoaderManager loaderManager;
     private LoaderManager.LoaderCallbacks<List<BookData>> bookDataLoaderListener;
 
@@ -44,17 +44,17 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
 
         mProgressBar = findViewById(R.id.progressbar);
-        mSearchBar = (EditText) findViewById(R.id.my_search_bar);
-        mSearchButton = (Button) findViewById(R.id.my_search_button);
-        listView = (ListView) findViewById(R.id.book_listview);
-        mAdapter = new BookDataAdapter(this, new ArrayList<BookData>());
-        listView.setAdapter(mAdapter);
+        mSearchBar = findViewById(R.id.my_search_bar);
+        mSearchButton = findViewById(R.id.my_search_button);
 
-        mEmptyStateTextView = (TextView) findViewById(R.id.empty_view);
-        listView.setEmptyView(mEmptyStateTextView);
+        recyclerView = findViewById(R.id.bookRecyclerView);
+        layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
+        bookDataRecyclerAdapter = new BookDataRecyclerAdapter(this);
+        recyclerView.setAdapter(bookDataRecyclerAdapter);
 
         loaderManager = LoaderManager.getInstance(this);
-
     }
 
     @Override
@@ -64,12 +64,11 @@ public class MainActivity extends AppCompatActivity{
         mSearchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mAdapter.clear();
-                mAdapter.notifyDataSetChanged();
-                String searchtext = mSearchBar.getText().toString();
-                url_api_call = mainurl + searchtext;
+                bookDataRecyclerAdapter.setBookData(new ArrayList<BookData>());
+                bookDataRecyclerAdapter.notifyDataSetChanged();
+                String searchText = mSearchBar.getText().toString();
+                url_api_call = mainUrl + searchText;
                 mProgressBar.setVisibility(View.VISIBLE);
-                mEmptyStateTextView.setText("");
                 loaderManager.restartLoader(BOOK_DATA_LOADER_ID, null, bookDataLoaderListener);
 
             }
@@ -80,12 +79,11 @@ public class MainActivity extends AppCompatActivity{
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
                 if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (i == KeyEvent.KEYCODE_ENTER)) {
 
-                    mAdapter.clear();
-                    mAdapter.notifyDataSetChanged();
-                    String searchtext = mSearchBar.getText().toString();
-                    url_api_call = mainurl + searchtext;
+                    bookDataRecyclerAdapter.setBookData(new ArrayList<BookData>());
+                    bookDataRecyclerAdapter.notifyDataSetChanged();
+                    String searchText = mSearchBar.getText().toString();
+                    url_api_call = mainUrl + searchText;
                     mProgressBar.setVisibility(View.VISIBLE);
-                    mEmptyStateTextView.setText("");
                     loaderManager.restartLoader(BOOK_DATA_LOADER_ID, null, bookDataLoaderListener);
 
                     return true;
@@ -103,31 +101,26 @@ public class MainActivity extends AppCompatActivity{
 
             @Override
             public void onLoadFinished(@NonNull Loader<List<BookData>> loader, List<BookData> bookData) {
-                mAdapter.clear();
+                bookDataRecyclerAdapter.setBookData(new ArrayList<BookData>());
 
                 if (bookData != null && !bookData.isEmpty()) {
-                    mAdapter.addAll(bookData);
+                    bookDataRecyclerAdapter.setBookData((ArrayList<BookData>) bookData);
                 } else {
-                    mEmptyStateTextView.setText(R.string.nobooks_str);
                 }
                 mProgressBar.setVisibility(View.INVISIBLE);
             }
 
             @Override
             public void onLoaderReset(@NonNull Loader<List<BookData>> loader) {
-                mAdapter.clear();
+                bookDataRecyclerAdapter.setBookData(new ArrayList<BookData>());
             }
         };
+    }
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                BookData currentbookdata = mAdapter.getItem(i);
-                Uri bookinfourl = Uri.parse(currentbookdata.getmBookInfoLink());
-                Intent bookinfointent = new Intent(Intent.ACTION_VIEW, bookinfourl);
-                startActivity(bookinfointent);
-            }
-        });
-
+    @Override
+    public void OnClick(String Url) {
+        Uri bookInfoUrl = Uri.parse(Url);
+        Intent bookInfoIntent = new Intent(Intent.ACTION_VIEW, bookInfoUrl);
+        startActivity(bookInfoIntent);
     }
 }
