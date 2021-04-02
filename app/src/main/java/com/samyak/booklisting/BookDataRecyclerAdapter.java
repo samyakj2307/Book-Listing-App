@@ -1,5 +1,6 @@
 package com.samyak.booklisting;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,22 +10,25 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 
 public class BookDataRecyclerAdapter extends RecyclerView.Adapter<BookDataRecyclerAdapter.BookDataViewHolder> {
 
     private final BookDataRecyclerAdapterOnClickHandler mClickHandler;
+    Context context;
     private ArrayList<BookData> bookData = new ArrayList<BookData>();
 
-    public BookDataRecyclerAdapter(BookDataRecyclerAdapterOnClickHandler mClickHandler) {
+    public BookDataRecyclerAdapter(Context context, BookDataRecyclerAdapterOnClickHandler mClickHandler) {
         this.mClickHandler = mClickHandler;
+        this.context = context;
     }
 
     @NonNull
     @Override
     public BookDataViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.booklist_item, parent, false);
-
         return new BookDataViewHolder(view);
     }
 
@@ -32,7 +36,11 @@ public class BookDataRecyclerAdapter extends RecyclerView.Adapter<BookDataRecycl
     public void onBindViewHolder(@NonNull BookDataViewHolder holder, int position) {
         holder.getBookTitle().setText(bookData.get(position).getmBookTitle());
         holder.getBookAuthor().setText(bookData.get(position).getmBookAuthor());
-        holder.getBookThumbnail().setImageBitmap(bookData.get(position).getmBookThumbnail());
+
+        Glide.with(context)
+                .load(bookData.get(position).getmBookThumbnailUri())
+                .into(holder.getBookThumbnail());
+
     }
 
     @Override

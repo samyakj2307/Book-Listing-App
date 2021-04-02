@@ -1,18 +1,18 @@
 package com.samyak.booklisting;
 
-import android.graphics.Bitmap;
+import android.net.Uri;
 
 public class BookData {
 
     private final String mBookTitle;
     private final String mBookAuthor;
-    private Bitmap mBookThumbnail;
-    private String mBookInfoLink;
+    private final Uri mBookThumbnailUri;
+    private final String mBookInfoLink;
 
-    public BookData(String Title, String Author, Bitmap PhotoBitmap, String BookInfoLink) {
+    public BookData(String Title, String Author, Uri ThumbnailUri, String BookInfoLink) {
         mBookTitle = Title;
         mBookAuthor = Author;
-        mBookThumbnail = PhotoBitmap;
+        mBookThumbnailUri = ThumbnailUri;
         mBookInfoLink = BookInfoLink;
 
     }
@@ -25,9 +25,8 @@ public class BookData {
         return mBookTitle;
     }
 
-
-    public Bitmap getmBookThumbnail() {
-        return mBookThumbnail;
+    public Uri getmBookThumbnailUri() {
+        return mBookThumbnailUri;
     }
 
     public String getmBookInfoLink() {

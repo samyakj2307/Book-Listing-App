@@ -23,8 +23,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements BookDataRecyclerAdapter.BookDataRecyclerAdapterOnClickHandler {
 
     private static final int BOOK_DATA_LOADER_ID = 1;
-    private final String API_KEY = "API-KEY";
-    private final String mainUrl = String.format("https://www.googleapis.com/books/v1/volumes?maxResults=10&key=%s&q=", API_KEY);
+    private final String API_KEY = "AIzaSyAzdzyIxohEhH0EkCtX3BHHf2z3-gqKXcQ";
+    private final String mainUrl = String.format("https://www.googleapis.com/books/v1/volumes?maxResults=40&key=%s&q=", API_KEY);
     private String url_api_call;
 
     private EditText mSearchBar;
@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements BookDataRecyclerA
         layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
-        bookDataRecyclerAdapter = new BookDataRecyclerAdapter(this);
+        bookDataRecyclerAdapter = new BookDataRecyclerAdapter(getApplicationContext(), this);
         recyclerView.setAdapter(bookDataRecyclerAdapter);
 
         loaderManager = LoaderManager.getInstance(this);
@@ -106,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements BookDataRecyclerA
                 if (bookData != null && !bookData.isEmpty()) {
                     bookDataRecyclerAdapter.setBookData((ArrayList<BookData>) bookData);
                 } else {
+                    //TODO Add a Empty Data View
                 }
                 mProgressBar.setVisibility(View.INVISIBLE);
             }
@@ -123,4 +124,5 @@ public class MainActivity extends AppCompatActivity implements BookDataRecyclerA
         Intent bookInfoIntent = new Intent(Intent.ACTION_VIEW, bookInfoUrl);
         startActivity(bookInfoIntent);
     }
+
 }

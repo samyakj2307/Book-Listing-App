@@ -1,8 +1,7 @@
 package com.samyak.booklisting;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -13,7 +12,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,7 +19,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +28,7 @@ public class BookDataLoader extends AsyncTaskLoader<List<BookData>> {
     private static final String LOG_TAG = "BookDataLoader";
     String mUrl;
 
-    public BookDataLoader(@NonNull Context context,String url) {
+    public BookDataLoader(@NonNull Context context, String url) {
         super(context);
         mUrl = url;
     }
@@ -44,7 +42,7 @@ public class BookDataLoader extends AsyncTaskLoader<List<BookData>> {
     @Nullable
     @Override
     public List<BookData> loadInBackground() {
-        if (mUrl==null) {
+        if (mUrl == null) {
             return null;
         }
 
@@ -52,12 +50,12 @@ public class BookDataLoader extends AsyncTaskLoader<List<BookData>> {
         return books;
     }
 
-    private ArrayList<BookData> fetchBooks(String stringUrl){
+    private ArrayList<BookData> fetchBooks(String stringUrl) {
         URL url = createUrl(stringUrl);
         String jsonresponse = "";
-        try{
+        try {
             jsonresponse = makeHttpRequest(url);
-        }catch (IOException e){
+        } catch (IOException e) {
             Log.e(LOG_TAG, "Error closing input stream", e);
         }
 
@@ -66,7 +64,7 @@ public class BookDataLoader extends AsyncTaskLoader<List<BookData>> {
 
     }
 
-    private URL createUrl(String UrlString){
+    private URL createUrl(String UrlString) {
         URL url = null;
         try {
             url = new URL(UrlString);
@@ -79,27 +77,27 @@ public class BookDataLoader extends AsyncTaskLoader<List<BookData>> {
 
     private String makeHttpRequest(URL url) throws IOException {
         String jsonresponse = "";
-        if(url==null){
+        if (url == null) {
             return null;
         }
         HttpURLConnection httpURLConnection = null;
-        InputStream inputStream =null;
+        InputStream inputStream = null;
         try {
             httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setReadTimeout(10000);
             httpURLConnection.setConnectTimeout(15000);
             httpURLConnection.connect();
 
-            if(httpURLConnection.getResponseCode()==200){
+            if (httpURLConnection.getResponseCode() == 200) {
                 inputStream = httpURLConnection.getInputStream();
                 jsonresponse = readFromStream(inputStream);
-            }else {
+            } else {
                 Log.e(LOG_TAG, "Error response code: " + httpURLConnection.getResponseCode());
             }
 
         } catch (IOException e) {
             Log.e(LOG_TAG, "Problem retrieving the earthquake JSON results.", e);
-        }finally {
+        } finally {
             if (httpURLConnection != null) {
                 httpURLConnection.disconnect();
             }
@@ -113,11 +111,11 @@ public class BookDataLoader extends AsyncTaskLoader<List<BookData>> {
 
     private String readFromStream(InputStream inputStream) throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
-        if (inputStream!=null){
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, Charset.forName("UTF-8"));
+        if (inputStream != null) {
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             String line = bufferedReader.readLine();
-            while (line!=null){
+            while (line != null) {
                 stringBuilder.append(line);
                 line = bufferedReader.readLine();
             }
@@ -125,93 +123,96 @@ public class BookDataLoader extends AsyncTaskLoader<List<BookData>> {
         return stringBuilder.toString();
     }
 
-    private Bitmap fetchBookImage(String stringUrl){
-            URL url = createUrl(stringUrl);
-            Bitmap photoBitmap = null;
-            try{
-                photoBitmap = makeHttpRequestforimage(url);
-                return photoBitmap;
-            }catch (IOException e){
-                Log.e(LOG_TAG, "Error closing input stream", e);
-            }
-            return null;
-        }
+//    private Bitmap fetchBookImage(String stringUrl){
+//            URL url = createUrl(stringUrl);
+//            Bitmap photoBitmap = null;
+//            try{
+//                photoBitmap = makeHttpRequestforimage(url);
+//                return photoBitmap;
+//            }catch (IOException e){
+//                Log.e(LOG_TAG, "Error closing input stream", e);
+//            }
+//            return null;
+//        }
+//
+//    private Bitmap makeHttpRequestforimage(URL url) throws IOException {
+//        Bitmap photoBitmap;
+//        if(url==null){
+//            return null;
+//        }
+//        HttpURLConnection httpURLConnection = null;
+//        InputStream inputStream =null;
+//        try {
+//            httpURLConnection = (HttpURLConnection) url.openConnection();
+//            httpURLConnection.setReadTimeout(10000);
+//            httpURLConnection.setConnectTimeout(15000);
+//            httpURLConnection.connect();
+//
+//            if(httpURLConnection.getResponseCode()==200){
+//                inputStream = httpURLConnection.getInputStream();
+//                photoBitmap = readFromStreamforimage(inputStream);
+//                return photoBitmap;
+//            }else {
+//                Log.e(LOG_TAG, "Error response code: " + httpURLConnection.getResponseCode());
+//            }
+//
+//        } catch (IOException e) {
+//            Log.e(LOG_TAG, "Problem retrieving the earthquake JSON results.", e);
+//        }finally {
+//            if (httpURLConnection != null) {
+//                httpURLConnection.disconnect();
+//            }
+//            if (inputStream != null) {
+//                inputStream.close();
+//            }
+//        }
+//        return null;
+//    }
+//
+//    private Bitmap readFromStreamforimage(InputStream inputStream) {
+//        if (inputStream != null) {
+//            BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+//            return BitmapFactory.decodeStream(bufferedInputStream);
+//        }
+//        return null;
+//    }
 
-    private Bitmap makeHttpRequestforimage(URL url) throws IOException {
-        Bitmap photoBitmap;
-        if(url==null){
-            return null;
-        }
-        HttpURLConnection httpURLConnection = null;
-        InputStream inputStream =null;
-        try {
-            httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.setReadTimeout(10000);
-            httpURLConnection.setConnectTimeout(15000);
-            httpURLConnection.connect();
 
-            if(httpURLConnection.getResponseCode()==200){
-                inputStream = httpURLConnection.getInputStream();
-                photoBitmap = readFromStreamforimage(inputStream);
-                return photoBitmap;
-            }else {
-                Log.e(LOG_TAG, "Error response code: " + httpURLConnection.getResponseCode());
-            }
-
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "Problem retrieving the earthquake JSON results.", e);
-        }finally {
-            if (httpURLConnection != null) {
-                httpURLConnection.disconnect();
-            }
-            if (inputStream != null) {
-                inputStream.close();
-            }
-        }
-        return null;
-    }
-
-    private Bitmap readFromStreamforimage(InputStream inputStream) {
-        if (inputStream != null) {
-            BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
-            return BitmapFactory.decodeStream(bufferedInputStream);
-        }
-        return null;
-    }
-
-
-    private ArrayList<BookData> extractBookData(String jsonresponse){
+    private ArrayList<BookData> extractBookData(String jsonresponse) {
         ArrayList<BookData> bookDataArrayList = new ArrayList<BookData>();
 
         try {
             JSONObject jsonObject = new JSONObject(jsonresponse);
             JSONArray bookinfo = jsonObject.getJSONArray("items");
 
-            for(int i = 0 ; i<bookinfo.length(); i++){
+            for (int i = 0; i < bookinfo.length(); i++) {
                 JSONObject singlebookinfo = bookinfo.getJSONObject(i);
                 JSONObject volumeinfo = singlebookinfo.getJSONObject("volumeInfo");
 
                 String booktitle = volumeinfo.getString("title");
                 String bookinfolink = volumeinfo.getString("infoLink");
 
-                JSONArray bookauthors = volumeinfo.getJSONArray("authors");
                 StringBuilder tempauthors = new StringBuilder();
-                tempauthors.append("By ");
-                for(int j = 0 ; j<bookauthors.length(); j++){
-                    tempauthors.append(bookauthors.getString(j)).append("\n");
+                if (volumeinfo.has("authors")) {
+                    JSONArray bookauthors = volumeinfo.getJSONArray("authors");
+                    tempauthors.append("By ");
+                    for (int j = 0; j < bookauthors.length(); j++) {
+                        tempauthors.append(bookauthors.getString(j)).append("\n");
+                    }
                 }
 
                 String authors = tempauthors.toString().trim();
 
-                if(volumeinfo.has("imageLinks")) {
+                if (volumeinfo.has("imageLinks")) {
                     JSONObject image = volumeinfo.getJSONObject("imageLinks");
-                    String bookthumbnail = image.getString("smallThumbnail");
-                    bookthumbnail = bookthumbnail.replace("http://","https://");
-                    Bitmap mybitmap = fetchBookImage(bookthumbnail);
-                    bookDataArrayList.add(new BookData(booktitle, authors, mybitmap, bookinfolink));
-                }
-                else {
-                    bookDataArrayList.add(new BookData(booktitle, authors, null, bookinfolink));
+                    String bookThumbnail = image.getString("smallThumbnail");
+                    bookThumbnail = bookThumbnail.replace("http://", "https://");
+                    Uri thumbnailUri = Uri.parse(bookThumbnail);
+                    bookDataArrayList.add(new BookData(booktitle, authors, thumbnailUri, bookinfolink));
+                } else {
+                    if (authors != null || !authors.equals("By")) {
+                        bookDataArrayList.add(new BookData(booktitle, authors, null, bookinfolink));
+                    }
                 }
             }
 
