@@ -123,61 +123,6 @@ public class BookDataLoader extends AsyncTaskLoader<List<BookData>> {
         return stringBuilder.toString();
     }
 
-//    private Bitmap fetchBookImage(String stringUrl){
-//            URL url = createUrl(stringUrl);
-//            Bitmap photoBitmap = null;
-//            try{
-//                photoBitmap = makeHttpRequestforimage(url);
-//                return photoBitmap;
-//            }catch (IOException e){
-//                Log.e(LOG_TAG, "Error closing input stream", e);
-//            }
-//            return null;
-//        }
-//
-//    private Bitmap makeHttpRequestforimage(URL url) throws IOException {
-//        Bitmap photoBitmap;
-//        if(url==null){
-//            return null;
-//        }
-//        HttpURLConnection httpURLConnection = null;
-//        InputStream inputStream =null;
-//        try {
-//            httpURLConnection = (HttpURLConnection) url.openConnection();
-//            httpURLConnection.setReadTimeout(10000);
-//            httpURLConnection.setConnectTimeout(15000);
-//            httpURLConnection.connect();
-//
-//            if(httpURLConnection.getResponseCode()==200){
-//                inputStream = httpURLConnection.getInputStream();
-//                photoBitmap = readFromStreamforimage(inputStream);
-//                return photoBitmap;
-//            }else {
-//                Log.e(LOG_TAG, "Error response code: " + httpURLConnection.getResponseCode());
-//            }
-//
-//        } catch (IOException e) {
-//            Log.e(LOG_TAG, "Problem retrieving the earthquake JSON results.", e);
-//        }finally {
-//            if (httpURLConnection != null) {
-//                httpURLConnection.disconnect();
-//            }
-//            if (inputStream != null) {
-//                inputStream.close();
-//            }
-//        }
-//        return null;
-//    }
-//
-//    private Bitmap readFromStreamforimage(InputStream inputStream) {
-//        if (inputStream != null) {
-//            BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
-//            return BitmapFactory.decodeStream(bufferedInputStream);
-//        }
-//        return null;
-//    }
-
-
     private ArrayList<BookData> extractBookData(String jsonresponse) {
         ArrayList<BookData> bookDataArrayList = new ArrayList<BookData>();
 
@@ -193,9 +138,9 @@ public class BookDataLoader extends AsyncTaskLoader<List<BookData>> {
                 String bookinfolink = volumeinfo.getString("infoLink");
 
                 StringBuilder tempauthors = new StringBuilder();
+                tempauthors.append("By ");
                 if (volumeinfo.has("authors")) {
                     JSONArray bookauthors = volumeinfo.getJSONArray("authors");
-                    tempauthors.append("By ");
                     for (int j = 0; j < bookauthors.length(); j++) {
                         tempauthors.append(bookauthors.getString(j)).append("\n");
                     }
@@ -210,7 +155,7 @@ public class BookDataLoader extends AsyncTaskLoader<List<BookData>> {
                     Uri thumbnailUri = Uri.parse(bookThumbnail);
                     bookDataArrayList.add(new BookData(booktitle, authors, thumbnailUri, bookinfolink));
                 } else {
-                    if (authors != null || !authors.equals("By")) {
+                    if (!authors.equals("By")) {
                         bookDataArrayList.add(new BookData(booktitle, authors, null, bookinfolink));
                     }
                 }
